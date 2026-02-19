@@ -15,7 +15,7 @@ public class GameModel {
     private double width;
     private double height;
 
-    private int score = 0;
+    private IntegerProperty score = new SimpleIntegerProperty(0);
     private boolean paused = false;
 
     private double mouseX = 0;
@@ -39,8 +39,26 @@ public class GameModel {
     public void update() {
         if (paused) return;
 
+        double dx = mouseX - x.get();
+        double dy = mouseY - y.get();
+        double dist = Math.sqrt(dx * dx + dy * dy);
+
         if (attract) {
-            pullToMouse();
+            if (dist > 1) {
+                speedX = speedX + (dx / dist) * 0.1;
+                speedY = speedY + (dy / dist) * 0.1;
+            }
+        } else {
+            if (dist < 100 && dist > 1) {
+                speedX = speedX - (dx / dist) * 0.1;
+                speedY = speedY - (dy / dist) * 0.1;
+            }
+        }
+
+        double nowSpeed = Math.sqrt(speedX * speedX + speedY * speedY);
+        if (nowSpeed > 3) {
+            speedX = (speedX / nowSpeed) * 1;
+            speedY = (speedY / nowSpeed) * 1;
         }
 
         double newX = x.get() + speedX;
@@ -62,23 +80,6 @@ public class GameModel {
         y.set(newY);
     }
 
-    private void pullToMouse() {
-        double dx = mouseX - x.get();
-        double dy = mouseY - y.get();
-        double dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist > 1) {
-            speedX = speedX + (dx / dist) * 2;
-            speedY = speedY + (dy / dist) * 2;
-
-            double nowSpeed = Math.sqrt(speedX * speedX + speedY * speedY);
-            if (nowSpeed > 3) {
-                speedX = (speedX / nowSpeed) * 3;
-                speedY = (speedY / nowSpeed) * 3;
-            }
-        }
-    }
-
     public boolean checkHit(double clickX, double clickY) {
         if (paused) return false;
 
@@ -87,30 +88,18 @@ public class GameModel {
         double dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist <= radius) {
-            score++;
+            score.set(score.get() + 1);
             return true;
         }
         return false;
     }
 
-    public int getScore() {
+    public IntegerProperty scoreProperty() {
         return score;
     }
 
     public boolean isPaused() {
         return paused;
-    }
-
-    public void slowDown() {
-        if (paused) return;
-        speedX = speedX * 0.5;
-        speedY = speedY * 0.5;
-    }
-
-    public void normalSpeed() {
-        if (paused) return;
-        speedX = startSpeedX;
-        speedY = startSpeedY;
     }
 
     public void setMouse(double mx, double my) {

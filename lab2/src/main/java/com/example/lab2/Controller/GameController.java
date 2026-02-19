@@ -23,7 +23,6 @@ public class GameController {
 
     @FXML
     public void initialize() {
-        // Фиксированные размеры
         double width = 560;
         double height = 400;
 
@@ -38,11 +37,15 @@ public class GameController {
         ball.centerXProperty().bind(model.xProp());
         ball.centerYProperty().bind(model.yProp());
 
-        // Обновляем счет каждую секунду (простой способ)
+        scoreLabel.textProperty().bind(model.scoreProperty().asString());
+
+        gamePane.setOnMouseMoved(this::onMouseMove);
+        gamePane.setOnMouseDragged(this::onMouseDrag);
+        gamePane.setOnMouseReleased(this::onMouseUp);
+
         timer = new AnimationTimer() {
             public void handle(long now) {
                 model.update();
-                scoreLabel.setText("Счет: " + model.getScore());
                 if (model.isPaused()) {
                     pauseLabel.setText("ПАУЗА");
                 } else {
@@ -51,11 +54,6 @@ public class GameController {
             }
         };
         timer.start();
-
-        // Обработчики мыши
-        gamePane.setOnMouseMoved(this::onMouseMove);
-        gamePane.setOnMouseDragged(this::onMouseDrag);
-        gamePane.setOnMouseReleased(this::onMouseUp);
     }
 
     @FXML
@@ -93,23 +91,15 @@ public class GameController {
     }
 
     @FXML
-    private void onBallEnter() {
-        if (model != null) {
-            model.slowDown();
-        }
-    }
-
-    @FXML
-    private void onBallExit() {
-        if (model != null) {
-            model.normalSpeed();
-        }
-    }
-
-    @FXML
     private void onPause() {
         if (model != null) {
             model.togglePause();
+        }
+    }
+
+    public void stopGame() {
+        if (timer != null) {
+            timer.stop();
         }
     }
 }

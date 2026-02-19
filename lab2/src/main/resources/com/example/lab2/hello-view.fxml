@@ -20,15 +20,10 @@
         <Label fx:id="pauseLabel" text="" style="-fx-font-size: 16px;"/>
     </HBox>
 
-    <Pane fx:id="gamePane" prefHeight="400.0" prefWidth="560.0"
-          onMouseMoved="#onMouseMove"
-          onMouseDragged="#onMouseDrag"
-          onMouseReleased="#onMouseUp">
+    <Pane fx:id="gamePane" prefHeight="400.0" prefWidth="560.0">
         <children>
             <Circle fx:id="ball" fill="DODGERBLUE"
                     onMouseClicked="#onMouseClick"
-                    onMouseEntered="#onBallEnter"
-                    onMouseExited="#onBallExit"
                     radius="18.0" stroke="BLACK" strokeType="INSIDE" />
         </children>
     </Pane>
